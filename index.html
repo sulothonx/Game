@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>ภารกิจพิชิตโลกคอมพิวเตอร์ - เกมผจญภัย 2D ชั้น ป.1</title>
+  <meta name="description" content="เกมผจญภัย 2D เรื่องภารกิจพิชิตโลกคอมพิวเตอร์ เสริมทักษะวิทยาการคำนวณสำหรับนักเรียนชั้น ป.1 สนุก ปลอดภัย รองรับทุกอุปกรณ์">
+  <meta name="theme-color" content="#3b82f6">
+
+  <!-- Google Fonts: Prompt, Kanit, Mali -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600;700;800&family=Mali:ital,wght@0,400;0,600;0,700;1,400&family=Prompt:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Canvas สำหรับเอฟเฟกต์พลุและดาวเฉลิมฉลอง -->
+  <canvas id="confettiCanvas"></canvas>
+
+  <div id="gameApp" class="game-container">
+
+    <!-- ==================== หน้าจอที่ 1: หน้าแรกและลงทะเบียนนักเรียน ==================== -->
+    <section id="startScreen" class="screen active">
+      <div class="sky-decorations">
+        <div class="cloud cloud-1"></div>
+        <div class="cloud cloud-2"></div>
+        <div class="cloud cloud-3"></div>
+        <div class="circuit-stars"></div>
+      </div>
+
+      <div class="welcome-card glass-panel">
+        <div class="game-logo-badge">
+          <span class="badge-icon">🎮</span>
+          <span class="badge-text">บทเรียนวิทยาการคำนวณ ป.1</span>
+        </div>
+
+        <h1 class="game-title">
+          <span class="title-sub">ภารกิจพิชิต</span>
+          <span class="title-main">โลกคอมพิวเตอร์</span>
+          <span class="title-chibi">✨ Computer World Adventure ✨</span>
+        </h1>
+
+        <p class="game-subtitle">
+          มาร่วมผจญภัยในโลกคอมพิวเตอร์ 5 ด่านสุดหรรษา เก็บเหรียญพลังงานและตอบคำถามชิงเหรียญทองเกียรติยศกันเถอะ!
+        </p>
+
+        <!-- ฟอร์มข้อมูลนักเรียน -->
+        <form id="studentForm" class="student-form" onsubmit="return false;">
+          <div class="form-title">
+            <span>📝</span> ข้อมูลนักเรียนคนเก่ง
+          </div>
+
+          <div class="input-grid">
+            <div class="input-group">
+              <label for="fullName">
+                <span class="label-icon">👤</span> ชื่อ - นามสกุล <span class="required">*</span>
+              </label>
+              <input type="text" id="fullName" placeholder="เช่น ด.ช.พอเพียง เรียนดี" required autocomplete="name">
+            </div>
+
+            <div class="input-row">
+              <div class="input-group">
+                <label for="studentClass">
+                  <span class="label-icon">🏫</span> ชั้น <span class="required">*</span>
+                </label>
+                <select id="studentClass" required>
+                  <option value="ป.1/1">ป.1/1</option>
+                  <option value="ป.1/2">ป.1/2</option>
+                  <option value="ป.1/3">ป.1/3</option>
+                  <option value="ป.1/4">ป.1/4</option>
+                  <option value="ป.1/5">ป.1/5</option>
+                  <option value="ป.1/6">ป.1/6</option>
+                  <option value="ป.1">ป.1 ทั่วไป</option>
+                </select>
+              </div>
+
+              <div class="input-group">
+                <label for="studentNo">
+                  <span class="label-icon">🔢</span> เลขที่ <span class="required">*</span>
+                </label>
+                <input type="number" id="studentNo" min="1" max="60" placeholder="เช่น 1" required>
+              </div>
+            </div>
+          </div>
+
+          <!-- เลือกตัวละครจิ๋ว Chibi -->
+          <div class="character-select-section">
+            <label class="section-label">
+              <span>🌟</span> เลือกตัวละครผู้กล้า:
+            </label>
+            <div class="character-options">
+              <button type="button" class="char-card active" data-char="boy">
+                <div class="char-preview-avatar boy-avatar"></div>
+                <span class="char-name">น้องกล้า 👦</span>
+                <span class="char-tag">นักสำรวจ</span>
+              </button>
+              <button type="button" class="char-card" data-char="girl">
+                <div class="char-preview-avatar girl-avatar"></div>
+                <span class="char-name">น้องแก้ว 👧</span>
+                <span class="char-tag">ผู้พิทักษ์</span>
+              </button>
+              <button type="button" class="char-card" data-char="robot">
+                <div class="char-preview-avatar robot-avatar"></div>
+                <span class="char-name">บิ๊ทบ็อท 🤖</span>
+                <span class="char-tag">หุ่นยนต์จิ๋ว</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- ปุ่มเริ่มเล่นเกม -->
+          <div class="action-buttons">
+            <button type="submit" id="btnStartGame" class="btn btn-primary pulse-btn">
+              <span class="btn-icon">🚀</span>
+              <span class="btn-text">เริ่มการผจญภัยเลย!</span>
+            </button>
+          </div>
+        </form>
+
+        <!-- แถบด่านทั้ง 5 ด่าน -->
+        <div class="stages-preview">
+          <div class="stage-chip"><span class="chip-num">1</span> ป่าแป้นพิมพ์</div>
+          <div class="stage-chip"><span class="chip-num">2</span> เมืองจอภาพ</div>
+          <div class="stage-chip"><span class="chip-num">3</span> ถ้ำเมาส์</div>
+          <div class="stage-chip"><span class="chip-num">4</span> หุบเขาเสียง</div>
+          <div class="stage-chip"><span class="chip-num">5</span> ปราสาทคอมพิวเตอร์</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== หน้าจอที่ 2: หน้าเล่นเกม Canvas ==================== -->
+    <section id="gameScreen" class="screen">
+      <!-- HUD ด้านบน -->
+      <header class="game-hud">
+        <div class="hud-left">
+          <!-- ผู้เล่น -->
+          <div class="player-badge">
+            <div id="hudAvatar" class="hud-avatar"></div>
+            <div class="player-info">
+              <div id="hudPlayerName" class="player-name">น้องกล้า</div>
+              <div id="hudPlayerClass" class="player-class">ป.1/1 • เลขที่ 1</div>
+            </div>
+          </div>
+
+          <!-- หัวใจพลังชีวิต -->
+          <div class="lives-container" title="พลังชีวิต">
+            <span class="lives-label">พลังชีวิต:</span>
+            <div id="heartsContainer" class="hearts-list">
+              <span class="heart active">❤️</span>
+              <span class="heart active">❤️</span>
+              <span class="heart active">❤️</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- ชื่อด่านปัจจุบัน -->
+        <div class="hud-center">
+          <div class="stage-banner">
+            <span id="hudStageNum" class="stage-number">ด่าน 1/5</span>
+            <span id="hudStageTitle" class="stage-title">ป่าแป้นพิมพ์</span>
+          </div>
+        </div>
+
+        <div class="hud-right">
+          <!-- เหรียญที่เก็บได้ -->
+          <div class="stat-pill coin-pill">
+            <span class="pill-icon">🪙</span>
+            <span id="hudCoins" class="pill-value">0</span>
+          </div>
+
+          <!-- คะแนนคำถาม -->
+          <div class="stat-pill score-pill">
+            <span class="pill-icon">⭐</span>
+            <span id="hudScore" class="pill-value">0</span>
+            <span class="pill-max">/100</span>
+          </div>
+
+          <!-- ปุ่มควบคุมเสียง / เต็มจอ -->
+          <button id="btnAudioToggle" class="hud-icon-btn" title="เปิด/ปิดเสียง" aria-label="เปิดหรือปิดเสียง">
+            <span id="audioIcon">🔊</span>
+          </button>
+          <button id="btnFullscreenToggle" class="hud-icon-btn" title="เต็มจอ" aria-label="เปิดเต็มหน้าจอ">
+            <span>⛶</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- พื้นที่เกม 2D Canvas -->
+      <div class="canvas-wrapper">
+        <canvas id="gameCanvas" width="960" height="540"></canvas>
+
+        <!-- ข้อความแนะนำการเล่น (ลอยชั่วคราว) -->
+        <div id="stageIntroBanner" class="stage-intro-overlay">
+          <div class="intro-card">
+            <div id="introIcon" class="intro-icon">⌨️</div>
+            <h2 id="introTitle" class="intro-title">ด่านที่ 1: ป่าแป้นพิมพ์</h2>
+            <p id="introDesc" class="intro-desc">เดินสำรวจและกระโดดข้ามอุปสรรคเพื่อไปหาผู้พิทักษ์คอมพิวเตอร์!</p>
+            <div class="intro-controls-hint">
+              <span>⌨️ ปุ่มลูกศร หรือ A/D เพื่อเดิน • Space เพื่อกระโดด</span>
+              <span>📱 หรือกดปุ่มบนหน้าจอด้านล่าง</span>
+            </div>
+            <button id="btnStartStage" class="btn btn-sm btn-primary">ลุยเลย! ✨</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- แป้นสัมผัสควบคุมสำหรับมือถือและแท็บเล็ต (Touch Controls) -->
+      <div id="touchControls" class="touch-controls">
+        <div class="dpad-left-right">
+          <button id="btnLeft" class="touch-btn" aria-label="เดินซ้าย">
+            <span>◀</span>
+          </button>
+          <button id="btnRight" class="touch-btn" aria-label="เดินขวา">
+            <span>▶</span>
+          </button>
+        </div>
+        <div class="dpad-action">
+          <button id="btnJump" class="touch-btn jump-btn" aria-label="กระโดด">
+            <span class="btn-jump-icon">⏫</span>
+            <span class="btn-jump-text">กระโดด</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== โมดอลคำถามประจำด่าน (Question Modal) ==================== -->
+    <div id="questionModal" class="modal-overlay">
+      <div class="modal-card question-card animate-pop">
+        <!-- แถบด้านบนของคำถาม -->
+        <div class="question-header">
+          <div class="guardian-avatar">
+            <div class="robot-face">🤖</div>
+            <div class="speech-bubble-tag">ผู้พิทักษ์คอมพิวเตอร์</div>
+          </div>
+          <div class="question-stage-tag" id="qStageTag">ด่านที่ 1: ป่าแป้นพิมพ์</div>
+        </div>
+
+        <!-- กล่องคำถาม -->
+        <div class="question-body">
+          <div class="question-illustration" id="qIllustration">
+            <!-- SVG อุปกรณ์คอมพิวเตอร์จะถูกแสดงที่นี่ -->
+          </div>
+
+          <div class="question-text-row">
+            <h2 id="qText" class="question-title">อุปกรณ์ใดใช้พิมพ์ตัวอักษร?</h2>
+            <button type="button" id="btnSpeakQuestion" class="btn-speak" title="กดฟังเสียงอ่านโจทย์">
+              <span class="speak-icon">🔊</span>
+              <span class="speak-label">ฟังเสียงโจทย์</span>
+            </button>
+          </div>
+
+          <!-- ตัวเลือก 3 ข้อ (ก, ข, ค) -->
+          <div class="options-grid" id="optionsContainer">
+            <button type="button" class="option-btn" data-key="ก">
+              <span class="opt-key">ก</span>
+              <span class="opt-text">เมาส์</span>
+            </button>
+            <button type="button" class="option-btn" data-key="ข">
+              <span class="opt-key">ข</span>
+              <span class="opt-text">แป้นพิมพ์</span>
+            </button>
+            <button type="button" class="option-btn" data-key="ค">
+              <span class="opt-key">ค</span>
+              <span class="opt-text">จอภาพ</span>
+            </button>
+          </div>
+
+          <!-- กล่องคำอธิบายเมื่อตอบผิดหรือตอบถูก -->
+          <div id="feedbackBox" class="feedback-box hidden">
+            <div class="feedback-icon" id="feedbackIcon">💡</div>
+            <div class="feedback-content">
+              <div class="feedback-title" id="feedbackTitle">คำแนะนำ</div>
+              <p class="feedback-desc" id="feedbackDesc">แป้นพิมพ์ (Keyboard) มีปุ่มตัวอักษรใช้สำหรับพิมพ์ข้อความเข้าคอมพิวเตอร์จ้า</p>
+            </div>
+            <button type="button" id="btnTryAgain" class="btn btn-sm btn-warning hidden">
+              ลองตอบใหม่อีกครั้งนะ 🔄
+            </button>
+            <button type="button" id="btnNextStage" class="btn btn-sm btn-success hidden">
+              ไปด่านถัดไป 🚀
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== โมดอลพลังหมด / ฟื้นพลัง (Respawn Modal) ==================== -->
+    <div id="respawnModal" class="modal-overlay">
+      <div class="modal-card respawn-card animate-pop">
+        <div class="respawn-icon">💖</div>
+        <h2 class="respawn-title">พลังหมดแล้ว ไม่เป็นไรนะ!</h2>
+        <p class="respawn-desc">
+          คนเก่งมาเติมพลังชีวิตให้เต็ม 3 ดวง ❤️❤️❤️ แล้วเริ่มสำรวจด่านนี้ใหม่อีกครั้งกันเถอะ สู้ๆ นะ!
+        </p>
+        <button type="button" id="btnRestartStage" class="btn btn-primary pulse-btn">
+          <span>🔄</span> เริ่มด่านนี้ใหม่ (ฟื้นพลังเต็ม!)
+        </button>
+      </div>
+    </div>
+
+    <!-- ==================== หน้าจอที่ 3: สรุปคะแนนจบเกมและส่งผล (Summary Screen) ==================== -->
+    <section id="summaryScreen" class="screen">
+      <div class="summary-card glass-panel">
+        <div class="trophy-wrapper">
+          <div class="trophy-aura"></div>
+          <div id="summaryMedalIcon" class="trophy-icon">🏆</div>
+        </div>
+
+        <div class="congrats-header">
+          <span class="congrats-tag">🎉 เยี่ยมยอดมาก ยินดีด้วยนะ! 🎉</span>
+          <h1 class="congrats-title">ภารกิจพิชิตโลกคอมพิวเตอร์ สำเร็จแล้ว!</h1>
+          <p class="congrats-sub">นักเรียนได้เรียนรู้อุปกรณ์คอมพิวเตอร์ครบทั้ง 5 ด่านอย่างยอดเยี่ยม</p>
+        </div>
+
+        <!-- บัตรเกียรติบัตร / สรุปผล -->
+        <div class="certificate-badge" id="certificateBox">
+          <div class="cert-ribbon">⭐ เกียรติบัตรผู้พิทักษ์คอมพิวเตอร์รุ่นเยาว์ ⭐</div>
+          <div class="cert-student-name" id="sumStudentName">เด็กชายพอเพียง เรียนดี</div>
+          <div class="cert-student-meta" id="sumStudentMeta">ชั้นประถมศึกษาปีที่ 1/1 • เลขที่ 1</div>
+
+          <div class="cert-score-grid">
+            <div class="cert-score-item">
+              <span class="score-label">คะแนนที่ได้</span>
+              <div class="score-number-wrap">
+                <span id="sumTotalScore" class="score-val">100</span>
+                <span class="score-total">/ 100</span>
+              </div>
+            </div>
+            <div class="cert-score-item">
+              <span class="score-label">ตอบคำถามถูกต้อง</span>
+              <div class="score-number-wrap">
+                <span id="sumCorrectCount" class="score-val">5</span>
+                <span class="score-total">/ 5 ข้อ</span>
+              </div>
+            </div>
+            <div class="cert-score-item full-span">
+              <span class="score-label">ระดับผลการเรียนรู้</span>
+              <div id="sumEvalLevel" class="eval-level-badge">🌟 ยอดเยี่ยม (Excellent)</div>
+            </div>
+          </div>
+
+          <div class="cert-date-footer">
+            <span>📅 วันที่สำเร็จภารกิจ: <span id="sumDateText">26/10/2026</span></span>
+          </div>
+        </div>
+
+        <!-- แถบแจ้งเตือนสถานะการบันทึกลง Google Sheets -->
+        <div id="sheetStatusBox" class="sheet-status-box status-loading">
+          <div class="status-spinner" id="statusSpinner"></div>
+          <div class="status-icon" id="statusIcon">💾</div>
+          <div class="status-text-content">
+            <div id="statusTitle" class="status-title">กำลังบันทึกคะแนน...</div>
+            <div id="statusDesc" class="status-desc">ระบบกำลังส่งข้อมูลไปยัง Google Sheets โปรดรอสักครู่</div>
+          </div>
+          <button type="button" id="btnRetrySave" class="btn btn-sm btn-outline hidden">
+            🔄 ลองส่งอีกครั้ง
+          </button>
+        </div>
+
+        <!-- ปุ่มควบคุมในหน้าสรุปผล -->
+        <div class="summary-actions">
+          <button type="button" id="btnPrintCert" class="btn btn-secondary">
+            <span>🖨️</span> พิมพ์ / บันทึกผล
+          </button>
+          <button type="button" id="btnPlayAgain" class="btn btn-primary pulse-btn">
+            <span>🎮</span> เล่นใหม่อีกครั้ง
+          </button>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

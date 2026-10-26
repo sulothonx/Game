@@ -1,0 +1,1554 @@
+/* ==============================================================================
+   ภารกิจพิชิตโลกคอมพิวเตอร์ - CSS Stylesheet
+   ออกแบบสำหรับเด็ก ป.1: สีสันสดใส ตัวหนังสือโต อ่านง่าย สัมผัสสนุก รองรับทุกอุปกรณ์
+   ============================================================================== */
+
+:root {
+  --primary-color: #3b82f6;
+  --primary-dark: #1d4ed8;
+  --primary-light: #93c5fd;
+  --secondary-color: #ec4899;
+  --secondary-dark: #be185d;
+  --accent-yellow: #f59e0b;
+  --accent-yellow-light: #fef3c7;
+  --success-color: #10b981;
+  --success-dark: #047857;
+  --danger-color: #ef4444;
+  --danger-dark: #b91c1c;
+  --warning-color: #f97316;
+  
+  --bg-gradient-start: #0f172a;
+  --bg-gradient-end: #1e1b4b;
+  --panel-bg: rgba(255, 255, 255, 0.95);
+  --panel-border: rgba(255, 255, 255, 0.6);
+  --card-shadow: 0 12px 32px rgba(15, 23, 42, 0.25);
+  --btn-shadow: 0 6px 0 rgba(0, 0, 0, 0.2);
+
+  --font-main: 'Prompt', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-fun: 'Kanit', sans-serif;
+  --font-kid: 'Mali', cursive, sans-serif;
+}
+
+/* Reset & Base Styles */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  font-family: var(--font-main);
+  background: linear-gradient(135deg, #1e1b4b 0%, #0f172a 50%, #172554 100%);
+  color: #1e293b;
+  touch-action: manipulation;
+}
+
+/* Canvas ละอองพลุ */
+#confettiCanvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* Container หลักของเกม */
+.game-container {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+/* จัดการการแสดงผลของหน้าจอ (Screen Switcher) */
+.screen {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: none;
+  opacity: 0;
+  transition: opacity 0.35s ease-in-out, transform 0.35s ease;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.screen.active {
+  display: flex;
+  flex-direction: column;
+  opacity: 1;
+}
+
+/* ==================== ตกแต่งพื้นหลัง ==================== */
+.sky-decorations {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.cloud {
+  position: absolute;
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: 50px;
+  filter: blur(2px);
+  animation: floatCloud 30s linear infinite;
+}
+
+.cloud::before, .cloud::after {
+  content: '';
+  position: absolute;
+  background: inherit;
+  border-radius: 50%;
+}
+
+.cloud-1 {
+  width: 180px;
+  height: 55px;
+  top: 8%;
+  left: -200px;
+  animation-duration: 35s;
+}
+.cloud-1::before {
+  width: 70px;
+  height: 70px;
+  top: -30px;
+  left: 30px;
+}
+.cloud-1::after {
+  width: 90px;
+  height: 90px;
+  top: -45px;
+  left: 70px;
+}
+
+.cloud-2 {
+  width: 240px;
+  height: 70px;
+  top: 25%;
+  left: -300px;
+  animation-duration: 45s;
+  animation-delay: 8s;
+  opacity: 0.6;
+}
+.cloud-2::before {
+  width: 90px;
+  height: 90px;
+  top: -40px;
+  left: 45px;
+}
+.cloud-2::after {
+  width: 110px;
+  height: 110px;
+  top: -55px;
+  left: 95px;
+}
+
+.cloud-3 {
+  width: 140px;
+  height: 45px;
+  top: 15%;
+  left: -150px;
+  animation-duration: 28s;
+  animation-delay: 18s;
+  opacity: 0.4;
+}
+
+@keyframes floatCloud {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(calc(100vw + 400px)); }
+}
+
+/* ==================== หน้าจอที่ 1: หน้าแรก / ลงทะเบียน ==================== */
+#startScreen {
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  background: radial-gradient(circle at top, #2563eb 0%, #1e1b4b 70%);
+}
+
+.welcome-card {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 680px;
+  background: var(--panel-bg);
+  border: 4px solid #bfdbfe;
+  border-radius: 28px;
+  padding: 28px 32px;
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.4), 0 0 0 8px rgba(59, 130, 246, 0.2);
+  text-align: center;
+  animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  backdrop-filter: blur(12px);
+}
+
+@keyframes slideUp {
+  0% { opacity: 0; transform: translateY(40px) scale(0.96); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.game-logo-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #dbeafe;
+  border: 2px solid #60a5fa;
+  color: #1d4ed8;
+  padding: 6px 16px;
+  border-radius: 50px;
+  font-family: var(--font-fun);
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.game-title {
+  margin-bottom: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.title-sub {
+  font-family: var(--font-fun);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #f59e0b;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.15);
+}
+
+.title-main {
+  font-family: var(--font-fun);
+  font-size: 2.5rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #1d4ed8 0%, #3b82f6 50%, #06b6d4 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 2px 6px rgba(59, 130, 246, 0.25));
+  letter-spacing: -0.5px;
+}
+
+.title-chibi {
+  font-family: var(--font-kid);
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #6366f1;
+}
+
+.game-subtitle {
+  font-size: 1rem;
+  color: #475569;
+  line-height: 1.5;
+  margin-bottom: 18px;
+  max-width: 520px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* กล่องฟอร์ม */
+.student-form {
+  background: #f8fafc;
+  border: 2px solid #e2e8f0;
+  border-radius: 20px;
+  padding: 20px;
+  margin-bottom: 18px;
+  text-align: left;
+}
+
+.form-title {
+  font-family: var(--font-fun);
+  font-weight: 700;
+  font-size: 1.15rem;
+  color: #1e293b;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border-bottom: 2px dashed #cbd5e1;
+  padding-bottom: 8px;
+}
+
+.input-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.input-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.input-group label {
+  font-family: var(--font-main);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #334155;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.required {
+  color: #ef4444;
+}
+
+.input-group input,
+.input-group select {
+  font-family: var(--font-main);
+  font-size: 1.05rem;
+  font-weight: 600;
+  padding: 10px 14px;
+  border: 2.5px solid #cbd5e1;
+  border-radius: 14px;
+  background: #ffffff;
+  color: #0f172a;
+  outline: none;
+  transition: all 0.2s ease;
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+.input-group input:focus,
+.input-group select:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2);
+}
+
+/* เลือกตัวละคร Chibi */
+.character-select-section {
+  margin-top: 14px;
+}
+
+.section-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #334155;
+  margin-bottom: 8px;
+}
+
+.character-options {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.char-card {
+  background: #ffffff;
+  border: 3px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 10px 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.char-card:hover {
+  transform: translateY(-3px);
+  border-color: #93c5fd;
+}
+
+.char-card.active {
+  background: #eff6ff;
+  border-color: #3b82f6;
+  box-shadow: 0 4px 14px rgba(59, 130, 246, 0.35);
+  transform: translateY(-4px) scale(1.03);
+}
+
+.char-preview-avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.boy-avatar {
+  background: linear-gradient(135deg, #60a5fa, #2563eb);
+}
+.boy-avatar::after {
+  content: '👦';
+  font-size: 32px;
+}
+
+.girl-avatar {
+  background: linear-gradient(135deg, #f472b6, #db2777);
+}
+.girl-avatar::after {
+  content: '👧';
+  font-size: 32px;
+}
+
+.robot-avatar {
+  background: linear-gradient(135deg, #34d399, #059669);
+}
+.robot-avatar::after {
+  content: '🤖';
+  font-size: 32px;
+}
+
+.char-name {
+  font-family: var(--font-fun);
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #1e293b;
+}
+
+.char-tag {
+  font-size: 0.75rem;
+  background: #e2e8f0;
+  padding: 2px 8px;
+  border-radius: 20px;
+  color: #64748b;
+  font-weight: 600;
+}
+
+.char-card.active .char-tag {
+  background: #3b82f6;
+  color: #ffffff;
+}
+
+/* ปุ่มทั่วไป */
+.btn {
+  font-family: var(--font-fun);
+  font-size: 1.15rem;
+  font-weight: 700;
+  padding: 12px 28px;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: all 0.18s ease;
+  box-shadow: var(--btn-shadow);
+  text-decoration: none;
+}
+
+.btn:active {
+  transform: translateY(3px);
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.2);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  color: #ffffff;
+  border-bottom: 4px solid #1e40af;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, #60a5fa 0%, #2563eb 100%);
+}
+
+.btn-secondary {
+  background: linear-gradient(135deg, #64748b 0%, #475569 100%);
+  color: #ffffff;
+  border-bottom: 4px solid #334155;
+}
+
+.btn-success {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: #ffffff;
+  border-bottom: 4px solid #047857;
+}
+
+.btn-warning {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  color: #ffffff;
+  border-bottom: 4px solid #b45309;
+}
+
+.btn-sm {
+  font-size: 0.95rem;
+  padding: 8px 20px;
+}
+
+.pulse-btn {
+  animation: heartPulse 2.2s infinite;
+}
+
+@keyframes heartPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.03); box-shadow: 0 8px 25px rgba(59, 130, 246, 0.5); }
+  100% { transform: scale(1); }
+}
+
+.action-buttons {
+  margin-top: 12px;
+  display: flex;
+  justify-content: center;
+}
+
+.stages-preview {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 14px;
+}
+
+.stage-chip {
+  background: #f1f5f9;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 50px;
+  padding: 4px 10px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #475569;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.chip-num {
+  background: #3b82f6;
+  color: white;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 800;
+}
+
+/* ==================== หน้าจอที่ 2: หน้าเล่นเกม Canvas ==================== */
+#gameScreen {
+  background: #020617;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0;
+}
+
+/* แถบ HUD ด้านบน */
+.game-hud {
+  width: 100%;
+  max-width: 1024px;
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  background: rgba(15, 23, 42, 0.85);
+  border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  z-index: 10;
+}
+
+.hud-left, .hud-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.player-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 4px 12px 4px 6px;
+  border-radius: 50px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.hud-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #3b82f6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+}
+
+.player-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.player-name {
+  color: #ffffff;
+  font-family: var(--font-fun);
+  font-weight: 700;
+  font-size: 0.9rem;
+  line-height: 1.1;
+}
+
+.player-class {
+  color: #94a3b8;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.lives-container {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(239, 68, 68, 0.15);
+  border: 1.5px solid rgba(239, 68, 68, 0.35);
+  padding: 4px 10px;
+  border-radius: 50px;
+}
+
+.lives-label {
+  color: #fca5a5;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.hearts-list {
+  display: flex;
+  gap: 2px;
+  font-size: 1.25rem;
+}
+
+.heart {
+  transition: transform 0.2s ease, opacity 0.2s ease;
+  display: inline-block;
+}
+
+.heart.active {
+  animation: heartWiggle 2s infinite ease-in-out;
+}
+
+.heart.lost {
+  opacity: 0.25;
+  filter: grayscale(100%);
+  transform: scale(0.8);
+}
+
+@keyframes heartWiggle {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+}
+
+.stage-banner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.stage-number {
+  color: #38bdf8;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.stage-title {
+  color: #ffffff;
+  font-family: var(--font-fun);
+  font-weight: 800;
+  font-size: 1.05rem;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+}
+
+.stat-pill {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 12px;
+  border-radius: 50px;
+  font-family: var(--font-fun);
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.coin-pill {
+  background: rgba(245, 158, 11, 0.2);
+  border: 1.5px solid rgba(245, 158, 11, 0.4);
+  color: #fbbf24;
+}
+
+.score-pill {
+  background: rgba(59, 130, 246, 0.2);
+  border: 1.5px solid rgba(59, 130, 246, 0.4);
+  color: #93c5fd;
+}
+
+.pill-max {
+  font-size: 0.75rem;
+  color: #64748b;
+}
+
+.hud-icon-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1.1rem;
+  transition: all 0.2s;
+}
+
+.hud-icon-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* พื้นที่ Canvas Wrapper */
+.canvas-wrapper {
+  position: relative;
+  flex: 1;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: #020617;
+}
+
+#gameCanvas {
+  max-width: 100%;
+  max-height: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: contain;
+  display: block;
+  background: #000;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+  border-radius: 6px;
+}
+
+/* โอเวอร์เลย์แนะนำตอนเริ่มด่าน */
+.stage-intro-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 20;
+  transition: opacity 0.3s ease;
+}
+
+.stage-intro-overlay.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.intro-card {
+  background: #ffffff;
+  border-radius: 24px;
+  padding: 24px 30px;
+  max-width: 480px;
+  width: 90%;
+  text-align: center;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+  border: 4px solid #60a5fa;
+  animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.intro-icon {
+  font-size: 54px;
+  margin-bottom: 8px;
+  animation: bounceSlow 2s infinite ease-in-out;
+}
+
+@keyframes bounceSlow {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+.intro-title {
+  font-family: var(--font-fun);
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #1e293b;
+  margin-bottom: 6px;
+}
+
+.intro-desc {
+  font-size: 1.05rem;
+  color: #475569;
+  line-height: 1.5;
+  margin-bottom: 16px;
+}
+
+.intro-controls-hint {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background: #f1f5f9;
+  padding: 10px;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #64748b;
+  margin-bottom: 18px;
+}
+
+/* ==================== แป้นควบคุมระบบสัมผัส (Touch Controls) ==================== */
+.touch-controls {
+  width: 100%;
+  max-width: 1024px;
+  padding: 12px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(15, 23, 42, 0.7);
+  backdrop-filter: blur(8px);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  z-index: 10;
+}
+
+.dpad-left-right {
+  display: flex;
+  gap: 16px;
+}
+
+.touch-btn {
+  width: 68px;
+  height: 68px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.15);
+  border: 2.5px solid rgba(255, 255, 255, 0.3);
+  color: #ffffff;
+  font-size: 1.8rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.1s ease;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+.touch-btn:active {
+  background: rgba(59, 130, 246, 0.6);
+  border-color: #60a5fa;
+  transform: scale(0.92);
+}
+
+.jump-btn {
+  width: 110px;
+  background: linear-gradient(135deg, rgba(236, 72, 153, 0.4), rgba(219, 39, 119, 0.6));
+  border-color: rgba(244, 114, 182, 0.6);
+}
+
+.jump-btn:active {
+  background: linear-gradient(135deg, rgba(236, 72, 153, 0.8), rgba(219, 39, 119, 0.9));
+  transform: scale(0.92);
+}
+
+.btn-jump-icon {
+  font-size: 1.4rem;
+  line-height: 1;
+}
+
+.btn-jump-text {
+  font-family: var(--font-fun);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #fdf2f8;
+}
+
+/* ==================== โมดอลคำถามประจำด่าน ==================== */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(12px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  z-index: 1000;
+}
+
+.modal-overlay.active {
+  display: flex;
+}
+
+.modal-card {
+  background: #ffffff;
+  border-radius: 28px;
+  padding: 26px 28px;
+  width: 100%;
+  max-width: 640px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  border: 4px solid #93c5fd;
+  text-align: center;
+}
+
+.animate-pop {
+  animation: modalPop 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes modalPop {
+  0% { opacity: 0; transform: scale(0.85); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+.question-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  border-bottom: 2px dashed #e2e8f0;
+  padding-bottom: 10px;
+}
+
+.guardian-avatar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.robot-face {
+  font-size: 28px;
+  background: #dbeafe;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #60a5fa;
+}
+
+.speech-bubble-tag {
+  font-family: var(--font-fun);
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #1e40af;
+}
+
+.question-stage-tag {
+  background: #f1f5f9;
+  color: #475569;
+  padding: 4px 12px;
+  border-radius: 50px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.question-illustration {
+  width: 100%;
+  height: 140px;
+  background: linear-gradient(135deg, #f0fdf4 0%, #e0f2fe 100%);
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 14px;
+  border: 2px solid #bfdbfe;
+  overflow: hidden;
+}
+
+.question-text-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.question-title {
+  font-family: var(--font-fun);
+  font-size: 1.45rem;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.btn-speak {
+  background: #fef3c7;
+  border: 2px solid #f59e0b;
+  border-radius: 50px;
+  padding: 6px 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  color: #92400e;
+  font-family: var(--font-fun);
+  font-weight: 700;
+  font-size: 0.85rem;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.btn-speak:hover {
+  background: #fde68a;
+  transform: scale(1.05);
+}
+
+.options-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.option-btn {
+  background: #ffffff;
+  border: 3px solid #cbd5e1;
+  border-radius: 18px;
+  padding: 12px 18px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  text-align: left;
+}
+
+.option-btn:hover {
+  border-color: #3b82f6;
+  background: #f8fafc;
+  transform: translateX(4px);
+}
+
+.opt-key {
+  background: #3b82f6;
+  color: #ffffff;
+  width: 40px;
+  height: 40px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-fun);
+  font-weight: 800;
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+
+.opt-text {
+  font-family: var(--font-fun);
+  font-weight: 700;
+  font-size: 1.25rem;
+  color: #1e293b;
+}
+
+.option-btn.correct {
+  background: #ecfdf5;
+  border-color: #10b981;
+}
+
+.option-btn.correct .opt-key {
+  background: #10b981;
+}
+
+.option-btn.wrong {
+  background: #fef2f2;
+  border-color: #ef4444;
+  animation: shake 0.4s ease-in-out;
+}
+
+.option-btn.wrong .opt-key {
+  background: #ef4444;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-8px); }
+  40%, 80% { transform: translateX(8px); }
+}
+
+/* กล่องคำแนะนำ */
+.feedback-box {
+  background: #f8fafc;
+  border: 2px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 14px 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  animation: fadeIn 0.3s ease;
+}
+
+.feedback-box.correct {
+  background: #f0fdf4;
+  border-color: #86efac;
+}
+
+.feedback-box.wrong {
+  background: #fff7ed;
+  border-color: #fdba74;
+}
+
+.feedback-icon {
+  font-size: 32px;
+}
+
+.feedback-title {
+  font-family: var(--font-fun);
+  font-weight: 800;
+  font-size: 1.1rem;
+  color: #0f172a;
+}
+
+.feedback-desc {
+  font-size: 0.95rem;
+  color: #475569;
+  line-height: 1.45;
+}
+
+/* Respawn Modal */
+.respawn-card {
+  max-width: 440px;
+}
+
+.respawn-icon {
+  font-size: 64px;
+  animation: heartPulse 1.5s infinite;
+  margin-bottom: 8px;
+}
+
+.respawn-title {
+  font-family: var(--font-fun);
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 8px;
+}
+
+.respawn-desc {
+  font-size: 1rem;
+  color: #64748b;
+  line-height: 1.5;
+  margin-bottom: 20px;
+}
+
+/* ==================== หน้าจอที่ 3: สรุปคะแนน (Summary Screen) ==================== */
+#summaryScreen {
+  justify-content: center;
+  align-items: center;
+  padding: 24px;
+  background: radial-gradient(circle at top, #1e40af 0%, #0f172a 80%);
+}
+
+.summary-card {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 640px;
+  background: #ffffff;
+  border: 4px solid #facc15;
+  border-radius: 32px;
+  padding: 32px 36px;
+  text-align: center;
+  box-shadow: 0 25px 60px rgba(0,0,0,0.5), 0 0 0 10px rgba(250, 204, 21, 0.2);
+  animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.trophy-wrapper {
+  position: relative;
+  display: inline-block;
+  margin-bottom: 12px;
+}
+
+.trophy-aura {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 120px;
+  height: 120px;
+  background: radial-gradient(circle, rgba(250, 204, 21, 0.45) 0%, rgba(250, 204, 21, 0) 70%);
+  border-radius: 50%;
+  animation: pulseAura 2s infinite ease-in-out;
+}
+
+@keyframes pulseAura {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.6; }
+  50% { transform: translate(-50%, -50%) scale(1.3); opacity: 1; }
+}
+
+.trophy-icon {
+  font-size: 72px;
+  position: relative;
+  z-index: 1;
+  filter: drop-shadow(0 6px 12px rgba(234, 179, 8, 0.4));
+}
+
+.congrats-tag {
+  background: #fef08a;
+  color: #854d0e;
+  padding: 4px 16px;
+  border-radius: 50px;
+  font-family: var(--font-fun);
+  font-weight: 700;
+  font-size: 0.95rem;
+  display: inline-block;
+  margin-bottom: 6px;
+}
+
+.congrats-title {
+  font-family: var(--font-fun);
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 4px;
+}
+
+.congrats-sub {
+  color: #64748b;
+  font-size: 0.95rem;
+  margin-bottom: 18px;
+}
+
+/* บัตรเกียรติบัตรจำลอง */
+.certificate-badge {
+  background: #f8fafc;
+  border: 2.5px solid #e2e8f0;
+  border-radius: 20px;
+  padding: 20px;
+  margin-bottom: 20px;
+  position: relative;
+}
+
+.cert-ribbon {
+  background: #3b82f6;
+  color: #ffffff;
+  padding: 4px 16px;
+  border-radius: 50px;
+  font-family: var(--font-fun);
+  font-weight: 700;
+  font-size: 0.9rem;
+  display: inline-block;
+  margin-bottom: 10px;
+}
+
+.cert-student-name {
+  font-family: var(--font-fun);
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #1e293b;
+  margin-bottom: 2px;
+}
+
+.cert-student-meta {
+  color: #64748b;
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.cert-score-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.cert-score-item {
+  background: #ffffff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.cert-score-item.full-span {
+  grid-column: span 2;
+}
+
+.score-label {
+  font-size: 0.8rem;
+  color: #64748b;
+  font-weight: 600;
+}
+
+.score-number-wrap {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.score-val {
+  font-family: var(--font-fun);
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #2563eb;
+}
+
+.score-total {
+  font-size: 0.95rem;
+  color: #94a3b8;
+  font-weight: 600;
+}
+
+.eval-level-badge {
+  font-family: var(--font-fun);
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #047857;
+  background: #d1fae5;
+  border: 1.5px solid #6ee7b7;
+  padding: 6px 18px;
+  border-radius: 50px;
+}
+
+.cert-date-footer {
+  font-size: 0.8rem;
+  color: #94a3b8;
+  font-weight: 500;
+  border-top: 1px dashed #cbd5e1;
+  padding-top: 8px;
+}
+
+/* กล่องแจ้งเตือนสถานะ Google Sheets */
+.sheet-status-box {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 18px;
+  border-radius: 16px;
+  margin-bottom: 18px;
+  text-align: left;
+  transition: all 0.3s ease;
+}
+
+.sheet-status-box.status-loading {
+  background: #eff6ff;
+  border: 2px solid #93c5fd;
+  color: #1e40af;
+}
+
+.sheet-status-box.status-success {
+  background: #f0fdf4;
+  border: 2px solid #86efac;
+  color: #166534;
+}
+
+.sheet-status-box.status-error {
+  background: #fef2f2;
+  border: 2px solid #fca5a5;
+  color: #991b1b;
+}
+
+.status-spinner {
+  width: 22px;
+  height: 22px;
+  border: 3px solid rgba(59, 130, 246, 0.3);
+  border-top-color: #2563eb;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.status-icon {
+  font-size: 24px;
+  display: none;
+  flex-shrink: 0;
+}
+
+.sheet-status-box.status-success .status-spinner,
+.sheet-status-box.status-error .status-spinner {
+  display: none;
+}
+
+.sheet-status-box.status-success .status-icon,
+.sheet-status-box.status-error .status-icon {
+  display: block;
+}
+
+.status-text-content {
+  flex: 1;
+}
+
+.status-title {
+  font-family: var(--font-fun);
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.status-desc {
+  font-size: 0.8rem;
+  opacity: 0.9;
+}
+
+.btn-outline {
+  background: transparent;
+  border: 2px solid currentColor;
+  color: inherit;
+  font-size: 0.8rem;
+  padding: 4px 10px;
+  border-radius: 50px;
+  cursor: pointer;
+  font-family: var(--font-fun);
+  font-weight: 700;
+}
+
+.summary-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+/* ยูทิลิตี */
+.hidden {
+  display: none !important;
+}
+
+/* ==================== พิมพ์เกียรติบัตร (@media print) ==================== */
+@media print {
+  body {
+    background: #ffffff;
+    color: #000000;
+  }
+
+  #confettiCanvas,
+  .hud-icon-btn,
+  .summary-actions,
+  .sheet-status-box,
+  .trophy-wrapper,
+  .congrats-sub,
+  .sky-decorations {
+    display: none !important;
+  }
+
+  .screen {
+    display: none !important;
+  }
+
+  #summaryScreen {
+    display: block !important;
+    padding: 0;
+    background: transparent;
+  }
+
+  .summary-card {
+    border: 3px solid #000;
+    box-shadow: none;
+    max-width: 100%;
+    padding: 20px;
+  }
+
+  .certificate-badge {
+    border: 2px solid #000;
+    background: #ffffff;
+  }
+}
+
+/* ==================== รองรับหน้าจอเล็ก / มือถือ (Responsive) ==================== */
+@media (max-width: 768px) {
+  .welcome-card {
+    padding: 20px 16px;
+    border-radius: 20px;
+  }
+
+  .title-main {
+    font-size: 1.9rem;
+  }
+
+  .game-hud {
+    padding: 6px 10px;
+  }
+
+  .player-class {
+    display: none;
+  }
+
+  .hud-avatar {
+    width: 28px;
+    height: 28px;
+    font-size: 16px;
+  }
+
+  .stage-title {
+    font-size: 0.9rem;
+  }
+
+  .pill-max {
+    display: none;
+  }
+
+  .touch-controls {
+    padding: 8px 16px;
+  }
+
+  .touch-btn {
+    width: 58px;
+    height: 58px;
+    font-size: 1.5rem;
+  }
+
+  .jump-btn {
+    width: 90px;
+  }
+
+  .modal-card {
+    padding: 18px 16px;
+    border-radius: 22px;
+  }
+
+  .question-title {
+    font-size: 1.2rem;
+  }
+
+  .question-illustration {
+    height: 110px;
+  }
+
+  .opt-text {
+    font-size: 1.05rem;
+  }
+
+  .summary-card {
+    padding: 20px 16px;
+  }
+
+  .congrats-title {
+    font-size: 1.45rem;
+  }
+}
